@@ -1,4 +1,4 @@
-"""CPU対戦機能を追加した Hit & Blow のゲーム進行。"""
+"""CPU対戦・タイマー・HIGH/LOWアイテムを統合したゲーム進行。"""
 
 from .core import judge, make_secret
 
@@ -7,6 +7,7 @@ def play(digits=3):
     cpu_secret = make_secret(digits)
     print(f"Hit & Blow CPU対戦（{digits} 桁・重複なし）")
 
+    # ===== ① 開始時に足す（難易度・あいさつ など）: ここに書く =====
     from .cpu import (
         choose_guess,
         is_valid_secret,
@@ -30,11 +31,19 @@ def play(digits=3):
     player_tries = 0
     cpu_tries = 0
     while True:
+        # ===== ② 入力コマンドに足す（ヒント・アイテム など）: ここに書く =====
+        from .item import high_low
         from .timer import elapsed_time, format_time, timed_input
 
         player_guess = timed_input(
-            "あなたの予想 > ", start_time
+            "あなたの予想（highlowでアイテム使用） > ",
+            start_time,
         ).strip()
+
+        if player_guess.lower() == "highlow":
+            print("HIGH / LOW の結果")
+            print(high_low(cpu_secret))
+            continue
 
         if len(player_guess) != digits or not player_guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
@@ -48,6 +57,7 @@ def play(digits=3):
         )
 
         if player_hit == digits:
+            # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
             print(
                 f"あなたの勝ち！ {player_tries} 回で当たり"
                 f"（CPUの数字 {cpu_secret}）"
