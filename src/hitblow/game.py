@@ -14,25 +14,36 @@ def play(digits=3):
     print(f"Hit & Blow（{digits} 桁・重複なし）")
 
     # ===== ① 開始時に足す（難易度・あいさつ など）: ここに書く =====
+    from .timer import start_timer
+
+    start_time = start_timer()
+    print("タイマーを開始しました")
 
     tries = 0
     while True:
-        guess = input("予想 > ").strip()
-
         # ===== ② 入力コマンドに足す（ヒント など）: ここに書く（import もここに） =====
         # 例:  from .hint import hint
         #      if guess == "h":
         #          print(hint(secret)); continue
+        from .timer import elapsed_time, format_time, timed_input
+
+        guess = timed_input("予想 > ", start_time).strip()
 
         if len(guess) != digits or not guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
             continue
         tries += 1
         hit, blow = judge(secret, guess)
-        print(f"  Hit={hit}  Blow={blow}")
+        guess_time = elapsed_time(start_time)
+        print(
+            f"  Hit={hit}  Blow={blow}  "
+            f"経過時間={format_time(guess_time)}"
+        )
         if hit == digits:
 
             # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
+            clear_time = guess_time
 
             print(f"正解！ {tries} 回で当たり（答え {secret}）")
+            print(f"クリアタイム: {format_time(clear_time)}")
             break
