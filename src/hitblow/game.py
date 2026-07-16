@@ -22,23 +22,33 @@ def play(digits=3):
     tries = 0
     while True:
         # ===== ② 入力コマンドに足す（ヒント など）: ここに書く（import もここに） =====
-        # 例:  from .hint import hint
-        #      if guess == "h":
-        #          print(hint(secret)); continue
         from .timer import elapsed_time, format_time, timed_input
+        from .item import high_low
 
-        guess = timed_input("予想 > ", start_time).strip()
+        guess = timed_input(
+            "予想（highlowでアイテム使用） > ",
+            start_time
+        ).strip()
+
+        if guess.lower() == "highlow":
+            print("HIGH / LOW の結果")
+            print(high_low(secret))
+            continue
 
         if len(guess) != digits or not guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
             continue
+
         tries += 1
         hit, blow = judge(secret, guess)
+
         guess_time = elapsed_time(start_time)
+
         print(
             f"  Hit={hit}  Blow={blow}  "
             f"経過時間={format_time(guess_time)}"
         )
+
         if hit == digits:
 
             # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
