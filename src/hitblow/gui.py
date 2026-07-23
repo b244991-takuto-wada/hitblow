@@ -374,21 +374,29 @@ class HitBlowGUI:
         self.timer_var.set(
             f"TIME  {format_time(elapsed_time(self.start_time))}"
         )
-        if tag == "lose":
-            self.root.after(100, self._show_game_over_image)
+        if tag == "win":
+            self.root.after(
+                100,
+                lambda: self._show_result_image("victory.png", "VICTORY"),
+            )
+        elif tag == "lose":
+            self.root.after(
+                100,
+                lambda: self._show_result_image("gameover.png", "GAME OVER"),
+            )
 
-    def _show_game_over_image(self):
-        """プレイヤーが負けたときにGAME OVER画像を表示する。"""
-        image_path = Path(__file__).with_name("gameover.png")
+    def _show_result_image(self, filename, title):
+        """勝敗に対応する画像を別ウィンドウで表示する。"""
+        image_path = Path(__file__).with_name(filename)
         if not image_path.exists():
             self._write_log(
-                "gameover.pngが見つからないため、画像を表示できません。\n",
+                f"{filename}が見つからないため、画像を表示できません。\n",
                 "system",
             )
             return
 
         popup = tk.Toplevel(self.root)
-        popup.title("GAME OVER")
+        popup.title(title)
         popup.configure(bg="#020617")
         popup.resizable(False, False)
         popup.transient(self.root)
@@ -398,7 +406,7 @@ class HitBlowGUI:
         except tk.TclError:
             popup.destroy()
             self._write_log(
-                "gameover.pngを読み込めませんでした。\n",
+                f"{filename}を読み込めませんでした。\n",
                 "system",
             )
             return
