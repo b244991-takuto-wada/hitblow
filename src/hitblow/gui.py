@@ -1,6 +1,7 @@
 """Tkinterで表示するHit & BlowのGUI。"""
 
 import tkinter as tk
+from pathlib import Path
 from tkinter import ttk
 
 from .core import judge, make_secret
@@ -373,6 +374,62 @@ class HitBlowGUI:
         self.timer_var.set(
             f"TIME  {format_time(elapsed_time(self.start_time))}"
         )
+        if tag == "lose":
+            self.root.after(100, self._show_game_over_image)
+
+    def _show_game_over_image(self):
+        """プレイヤーが負けたときにGAME OVER画像を表示する。"""
+        image_path = Path(__file__).with_name("gameover.png")
+        if not image_path.exists():
+            self._write_log(
+                "gameover.pngが見つからないため、画像を表示できません。\n",
+                "system",
+            )
+            return
+
+        popup = tk.Toplevel(self.root)
+        popup.title("GAME OVER")
+        popup.configure(bg="#020617")
+        popup.resizable(False, False)
+        popup.transient(self.root)
+
+        try:
+            image = tk.PhotoImage(file=str(image_path))
+        except tk.TclError:
+            popup.destroy()
+            self._write_log(
+                "gameover.pngを読み込めませんでした。\n",
+                "system",
+            )
+            return
+
+        max_width = max(320, int(self.root.winfo_screenwidth() * 0.75))
+        max_height = max(240, int(self.root.winfo_screenheight() * 0.70))
+        width_scale = (image.width() + max_width - 1) // max_width
+        height_scale = (image.height() + max_height - 1) // max_height
+        scale = max(1, width_scale, height_scale)
+        if scale > 1:
+            image = image.subsample(scale, scale)
+
+        popup.game_over_image = image
+        tk.Label(
+            popup,
+            image=image,
+            bg="#020617",
+            borderwidth=0,
+        ).pack(padx=10, pady=(10, 6))
+        ttk.Button(
+            popup,
+            text="閉じる",
+            command=popup.destroy,
+            style="Secondary.TButton",
+        ).pack(pady=(0, 10))
+
+        popup.update_idletasks()
+        x = (popup.winfo_screenwidth() - popup.winfo_width()) // 2
+        y = (popup.winfo_screenheight() - popup.winfo_height()) // 2
+        popup.geometry(f"+{x}+{y}")
+        popup.grab_set()
 
     def _update_timer(self):
         """画面上のタイマーを更新する。"""
