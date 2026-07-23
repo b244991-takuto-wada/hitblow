@@ -26,7 +26,8 @@ def play(digits=3):
 
     cpu_candidates = make_candidates(digits)
     start_time = start_timer()
-    print("タイマーを開始しました。あなたが先攻です")
+    print("タイマーを開始しました。あなたが先攻です。")
+    print("highlow...相手の数字のlow(0~4)high(5~9)の並びがわかる")
 
     player_tries = 0
     cpu_tries = 0
