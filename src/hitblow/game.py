@@ -3,7 +3,7 @@
 from .core import judge, make_secret
 
 
-def play(digits=3):
+def play_console(digits=3):
     cpu_secret = make_secret(digits)
     print(f"Hit & Blow CPU対戦（{digits} 桁・重複なし）")
 
@@ -85,3 +85,10 @@ def play(digits=3):
         cpu_candidates = narrow_candidates(
             cpu_candidates, cpu_guess, cpu_hit, cpu_blow
         )
+
+
+def play(digits=3):
+    """Tkinter版のHit & Blowを起動する。"""
+    from .gui import play_gui
+
+    play_gui(digits)
